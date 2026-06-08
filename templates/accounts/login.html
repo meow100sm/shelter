@@ -1,0 +1,23 @@
+{% extends 'base_no_menu.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5" style="max-width: 400px;">
+    <div class="dialog small">
+        <div class="dialog-head"><strong>Вход в систему учёта приюта</strong></div>
+        <div class="dialog-body">
+            <div style="display:grid; place-items:center; margin-bottom:18px">
+                <div class="logo" style="width:56px;height:56px;border-radius:16px">PAW</div>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="field"><label>Логин</label><input type="text" name="username" required autofocus></div>
+                <div class="field" style="margin-top:12px"><label>Пароль</label><input type="password" name="password" required></div>
+                <div class="btns" style="margin-top:18px"><button type="submit" class="btn" style="width:100%">Войти</button></div>
+            </form>
+            <div class="text-center mt-3">
+                <a href="{% url 'accounts:register' %}">Нет аккаунта? Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

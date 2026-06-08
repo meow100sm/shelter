@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> /
+    <a>Профиль</a>
+</div>
+<h2 class="title">Профиль пользователя</h2>
+<div class="grid-2">
+    <div class="card" style="position: relative; min-height: auto; margin-bottom: 20px;">
+        <div class="card-body" style="padding: 1rem;">
+            <div style="margin-bottom: 20px;"><strong>Информация о пользователе</strong></div>
+            
+            <div style="display: grid; grid-template-columns: 130px 1fr; gap: 6px 8px; font-size: 0.9rem;">
+                <div style="color: #6c757d;">Логин:</div>
+                <div><strong>{{ user.username }}</strong></div>
+                
+                <div style="color: #6c757d;">ФИО:</div>
+                <div>{{ user.full_name|default:"—" }}</div>
+                
+                <div style="color: #6c757d;">Email:</div>
+                <div>{{ user.email|default:"—" }}</div>
+                
+                <div style="color: #6c757d;">Роль:</div>
+                <div>{{ user.get_role_display }}</div>
+                
+                <div style="color: #6c757d;">2FA:</div>
+                <div>
+                    {% if user.is_2fa_enabled %}
+                        <div>Включена</div>
+                    {% else %}
+                        <div>Выключена</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+            <a href="{% url 'accounts:profile_edit' %}" style="position: absolute; bottom: 8px; right: 16px;"
+        class="btn">Редактировать</a>
+        </div>
+        <!-- <a href="{% url 'accounts:profile_edit' %}" 
+        style="position: absolute; bottom: 12px; right: 16px;"
+        class="btn">Редактировать</a> -->
+    </div>
+    <div class="card section">
+        <strong>Смена пароля</strong>
+        <form method="post" action="{% url 'accounts:change_password' %}">
+            {% csrf_token %}
+            <div class="field" style="margin-top:12px">
+                <label>Старый пароль</label>
+                <input type="password" name="old_password" class="form-control">
+                <small class="note">Введите текущий пароль для подтверждения изменения.</small>
+            </div>
+            <div class="field" style="margin-top:12px">
+                <label>Новый пароль</label>
+                <input type="password" name="new_password1" class="form-control">
+                <small class="note">Используйте надёжный пароль (буквы, цифры, символы).</small>
+            </div>
+            <div class="field" style="margin-top:12px">
+                <label>Подтверждение</label>
+                <input type="password" name="new_password2" class="form-control">
+                <small class="note">Повторите новый пароль ещё раз.</small>
+            </div>
+            <div class="btns" style="margin-top: 16px;"><button type="submit" class="btn">Изменить пароль</button></div>
+        </form>
+    </div>
+</div>
+{% if user.role == 'admin' or user.role == 'vet' %}
+<div class="card section">
+    <div class="toolbar">
+        <strong>Настройка двухфакторной аутентификации</strong>
+    </div>
+    {% if user.is_2fa_enabled %}
+        <p class="text-success">✓ Двухфакторная аутентификация включена и настроена.</p>
+        <a href="{% url 'accounts:disable_2fa' %}" class="btn btn-danger btn-sm">Отключить 2FA</a>
+    {% else %}
+        <p>Двухфакторная аутентификация отключена.</p>
+        <a href="{% url 'accounts:setup_2fa' %}" class="btn btn-primary btn-sm">Настроить 2FA</a>
+    {% endif %}
+</div>
+{% endif %}
+
+<a href="{% url 'accounts:logout' %}" class="btn btn-danger">Выйти</a>
+{% endblock %}

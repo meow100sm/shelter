@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> /
+    <a href="{% url 'animals:animal_detail' photo.animal.pk %}?tab=photos">{{ photo.animal.unique_id }}</a> /
+    <span>Удаление фото</span>
+</div>
+
+<h1 class="title">Удалить фото?</h1>
+
+<div class="card" style="max-width: 720px; margin: 0 auto;">
+    <div class="card-body" style="padding: 1.5rem;">
+        <p class="note">Это действие необратимо.</p>
+
+        <div style="margin: 14px 0;">
+            <img src="{{ photo.image.url }}" alt="Фото" style="max-width: 100%; border-radius: 14px; border: 1px solid var(--line);">
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="btns" style="justify-content: flex-end; gap: 12px;">
+                <button type="submit" class="btn btn-danger">Удалить</button>
+                <a href="{% url 'animals:animal_detail' photo.animal.pk %}?tab=photos" class="btn secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 40px auto;">
+    <div class="card">
+        <div class="card-body" style="padding: 1rem 1.5rem;">
+            <h3 class="card-title" style="margin: 0 0 16px 0;">🗑️ Удаление движения</h3>
+            <p><strong>Животное:</strong> {{ movement.animal.unique_id }} — {{ movement.animal.name|default:"Без клички" }}</p>
+            <p><strong>Дата:</strong> {{ movement.date|date:"d.m.Y" }}</p>
+            <p><strong>Причина:</strong> {{ movement.get_reason_display }}</p>
+            <p class="text-danger">⚠️ Это действие нельзя отменить.</p>
+            <form method="post">
+                {% csrf_token %}
+                {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+                <div class="btns" style="justify-content: flex-end; gap: 12px;">
+                    <button type="submit" class="btn btn-danger">Да, удалить</button>
+                    <a href="{{ next|default:request.META.HTTP_REFERER|default:'/movements/' }}" class="btn secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

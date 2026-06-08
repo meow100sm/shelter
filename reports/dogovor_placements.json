@@ -1,0 +1,117 @@
+{
+  "comment": "Auto-generated placement mapping for dogovor.pdf. Units are PDF points; origin is bottom-left of page.",
+  "fields": [
+    {
+      "key": "animal_species",
+      "page": 1,
+      "x": 113.98,
+      "y": 408.058,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_breed",
+      "page": 1,
+      "x": 131.0,
+      "y": 392.338,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_sex",
+      "page": 1,
+      "x": 113.86,
+      "y": 376.618,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_color",
+      "page": 1,
+      "x": 124.39999999999999,
+      "y": 360.898,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_features",
+      "page": 1,
+      "x": 86.984,
+      "y": 329.458,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_approx_age",
+      "page": 1,
+      "x": 227.55200000000002,
+      "y": 282.50800000000004,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_name",
+      "page": 1,
+      "x": 305.69599999999997,
+      "y": 266.788,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_species",
+      "page": 4,
+      "x": 113.228,
+      "y": 466.87800000000004,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_breed",
+      "page": 4,
+      "x": 130.28,
+      "y": 451.158,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_sex",
+      "page": 4,
+      "x": 113.132,
+      "y": 435.418,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_color",
+      "page": 4,
+      "x": 123.7,
+      "y": 419.69800000000004,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_features",
+      "page": 4,
+      "x": 86.264,
+      "y": 388.25800000000004,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_approx_age",
+      "page": 4,
+      "x": 226.832,
+      "y": 341.69800000000004,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    },
+    {
+      "key": "animal_name",
+      "page": 4,
+      "x": 308.31199999999995,
+      "y": 325.978,
+      "font": "DogovorTimesNewRoman",
+      "fontSize": 10
+    }
+  ]
+}

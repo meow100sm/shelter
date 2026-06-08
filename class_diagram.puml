@@ -1,0 +1,91 @@
+@startuml
+' Диаграмма классов (Django ORM) для главы 2
+' Проект: shelter_project2
+
+skinparam backgroundColor transparent
+skinparam classAttributeIconSize 0
+hide methods
+
+package "accounts" {
+  class User {
+    +id: BigAutoField
+    +username: str
+    +email: str
+    +role: str
+    +full_name: str
+    +totp_secret: str?
+    +is_2fa_enabled: bool
+  }
+
+  class AuditLog {
+    +id: BigAutoField
+    +user_id: FK(User)?
+    +action: str
+    +timestamp: datetime
+    +details: text
+  }
+}
+
+package "animals" {
+  class Animal {
+    +id: BigAutoField
+    +unique_id: str <<unique>>
+    +name: str?
+    +species: str
+    +breed: str?
+    +sex: char
+    +birth_date: date?
+    +approx_age: str?
+    +color: str?
+    +features: text?
+    +intake_date: date
+    +intake_source: str?
+    +status: str
+    +created_by_id: FK(User)?
+    +created_at: datetime
+    +updated_at: datetime
+  }
+
+  class Photo {
+    +id: BigAutoField
+    +animal_id: FK(Animal)
+    +image: ImageField
+    +order: int
+    +uploaded_at: datetime
+    +uploaded_by_id: FK(User)?
+  }
+
+  class VetRecord {
+    +id: BigAutoField
+    +animal_id: FK(Animal)
+    +date: date
+    +type: str
+    +description: text?
+    +vet_name: str?
+    +vet_email: email?
+    +next_due_date: date?
+    +created_at: datetime
+  }
+
+  class Movement {
+    +id: BigAutoField
+    +animal_id: FK(Animal)
+    +date: date
+    +from_location: str?
+    +to_location: str?
+    +reason: str
+    +notes: text?
+    +created_at: datetime
+  }
+}
+
+' Связи (FK)
+User "1" o-- "0..*" AuditLog : writes
+User "1" o-- "0..*" Animal : created_by
+User "1" o-- "0..*" Photo : uploaded_by
+
+Animal "1" *-- "0..*" Photo : photos
+Animal "1" *-- "0..*" VetRecord : vet_records
+Animal "1" *-- "0..*" Movement : movements
+
+@enduml

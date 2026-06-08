@@ -1,0 +1,47 @@
+@startuml
+' Deployment diagram for running the project without Docker
+' Project: shelter_project2 / PawCare
+
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam linetype ortho
+skinparam componentStyle uml2
+left to right direction
+
+node "User Device" as client {
+  artifact "Browser" as browser
+}
+
+node "Host PC / Server" as host {
+  node "Python environment\n(.venv)" as pyenv {
+    artifact "Django app\nmanage.py runserver\nor run_https_server.py" as django
+  }
+
+  node "Local PostgreSQL" as pgnode {
+    database "PostgreSQL\n(shelter_db)" as db
+  }
+
+  folder "media/" as media
+  folder "staticfiles/" as staticfiles
+}
+
+cloud "External services" as ext {
+  component "SMTP server" as smtp
+}
+
+browser --> django : HTTP / HTTPS
+django --> db : SQL
+django --> media : file upload / read
+django --> staticfiles : static assets
+django --> smtp : email reminders
+
+note right of django
+  The project can be started locally with:
+  - python manage.py runserver
+  - or scripts/run_https.ps1 + run_https_server.py
+
+  PostgreSQL must be installed separately.
+  media/ and staticfiles/ are regular folders on disk.
+end note
+
+@enduml

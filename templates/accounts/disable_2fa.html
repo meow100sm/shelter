@@ -1,0 +1,22 @@
+{% extends 'base_no_menu.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 40px auto;">
+    <div class="card">
+        <div class="card-header bg-danger text-white" style="padding: 12px 20px;">
+            <h3 class="mb-0">Отключение 2FA</h3>
+        </div>
+        <div class="card-body" style="padding: 1rem 1.5rem 1.5rem;">
+            <p>Вы уверены, что хотите отключить двухфакторную аутентификацию?</p>
+            <p>В целях безопасности настоятельно рекомендуется оставить 2FA включённой.</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="btns" style="justify-content: flex-end; gap: 12px;">
+                    <button type="submit" class="btn btn-danger">Да, отключить</button>
+                    <a href="{% url 'accounts:profile' %}" class="btn secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

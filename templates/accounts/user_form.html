@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 20px auto;">
+    <div class="dialog">
+        <div class="dialog-head"><strong>{% if user_obj %}Редактирование пользователя{% else %}Создание пользователя{% endif %}</strong></div>
+        <div class="dialog-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="field"><label>Логин</label><input type="text" name="username" value="{{ user_obj.username }}" required></div>
+                <div class="field"><label>Пароль</label><input type="password" name="password" {% if not user_obj %}required{% endif %}></div>
+                <div class="field"><label>ФИО</label><input type="text" name="full_name" value="{{ user_obj.full_name }}"></div>
+                <div class="field"><label>Роль</label>
+                    <select name="role">
+                        <option value="admin" {% if user_obj.role == 'admin' %}selected{% endif %}>Администратор</option>
+                        <option value="vet" {% if user_obj.role == 'vet' %}selected{% endif %}>Ветеринар</option>
+                        <option value="volunteer" {% if user_obj.role == 'volunteer' %}selected{% endif %}>Волонтёр</option>
+                    </select>
+                </div>
+                <label><input type="checkbox" name="is_2fa_enabled" {% if user_obj.is_2fa_enabled %}checked{% endif %}> Требовать 2FA</label>
+                <div class="dialog-foot">
+                    <button type="submit" class="btn">Сохранить</button>
+                    <a href="{% url 'accounts:user_list' %}" class="btn secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# Django collectstatic output
+staticfiles/
+
+# Uploaded media (usually environment-specific)
+media/
+
+# Editor
+.vscode/
+.DS_Store
+
+# Environment variables
+.env
+.env.*
+
+# Backups
+backups/

@@ -1,0 +1,8 @@
+localhost:443 {
+    reverse_proxy web:8000
+    tls /etc/caddy/ssl/cert.pem /etc/caddy/ssl/key.pem
+}
+
+http://localhost {
+    redir https://localhost{uri}
+}

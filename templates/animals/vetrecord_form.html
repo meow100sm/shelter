@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> /
+    {% if record %}
+    <a href="{% url 'animals:vet_journal' %}">Ветеринария</a> / Редактирование записи
+    {% else %}<a href="{% url 'animals:vet_journal' %}">Ветеринария</a> / Добавление записи{% endif %}
+</div>
+<h1 class="title">
+    {% if record %}Редактирование ветеринарной записи{% else %}Добавление ветеринарной записи{% endif %}
+</h1>
+
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <div class="card-body" style="padding: 1.5rem;">
+        <form method="post" action="?next={{ next|urlencode }}">
+            {% csrf_token %}
+
+            {% if animal and hide_animal_field %}
+                {# Режим «из карточки» – животное фиксировано #}
+                <input type="hidden" name="animal" value="{{ animal.id }}">
+                <div class="field" style="margin-bottom: 1rem;">
+                    <label>Животное</label>
+                    <div><strong>{{ animal.unique_id }} — {{ animal.name|default:"Без клички" }}</strong></div>
+                </div>
+                {% for field in form %}
+                    {% if field.name != 'animal' %}
+                        <div class="field" style="margin-bottom: 1rem;">
+                            {{ field.label_tag }}
+                            {% if field.name == 'date' and prefilled_date %}
+                                {# Если это поле даты и мы имеем предзаполненное значение из календаря #}
+                                <input type="date" name="date" value="{{ prefilled_date }}" required id="{{ field.id_for_label }}">
+                            {% else %}
+                                {# Все остальные поля (и дата, если нет prefilled_date) выводятся обычно #}
+                                {{ field }}
+                            {% endif %}
+                            {% if field.help_text %}<small class="note">{{ field.help_text }}</small>{% endif %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger" style="margin-top: 4px; padding: 4px 8px;">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {# Режим «из журнала» – полная форма с ручным выводом всех полей #}
+                {% for field in form %}
+                    <div class="field" style="margin-bottom: 1rem;">
+                        {{ field.label_tag }}
+                        {% if field.name == 'date' and prefilled_date %}
+                            {# Если это поле даты и мы имеем предзаполненное значение из календаря #}
+                            <input type="date" name="date" value="{{ prefilled_date }}" required id="{{ field.id_for_label }}">
+                        {% else %}
+                            {# Все остальные поля (и дата, если нет prefilled_date) выводятся обычно #}
+                            {{ field }}
+                        {% endif %}
+                        {% if field.help_text %}<small class="note">{{ field.help_text }}</small>{% endif %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger" style="margin-top: 4px; padding: 4px 8px;">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="btns" style="margin-top: 1.5rem; justify-content: flex-end;">
+                <button type="submit" class="btn">Сохранить</button>
+                <a href="{{ cancel_url|default:request.META.HTTP_REFERER|default:'/vet/journal/' }}" class="btn secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

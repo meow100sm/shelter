@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> /
+    {% if animal %}<a href="{% url 'animals:movement_list' %}">Движение</a> / Добавление для {{ animal.unique_id }}
+    {% else %}<a href="{% url 'animals:movement_list' %}">Движение</a> / Зафиксировать перемещение{% endif %}
+</div>
+<h1 class="title">
+    {% if movement %}Редактирование движения{% else %}Зафиксировать движение{% endif %}
+</h1>
+
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <div class="card-body" style="padding: 1.5rem;">
+        <form method="post" action="?next={{ next|urlencode }}">
+            {% csrf_token %}
+
+            {% if animal and hide_animal_field %}
+                {# Режим из карточки: животное фиксировано #}
+                <input type="hidden" name="animal" value="{{ animal.id }}">
+                <div class="field" style="margin-bottom: 1rem;">
+                    <label>Животное</label>
+                    <div><strong>{{ animal.unique_id }} — {{ animal.name|default:"Без клички" }}</strong></div>
+                </div>
+                {% for field in form %}
+                    {% if field.name != 'animal' %}
+                        <div class="field" style="margin-bottom: 1rem;">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.help_text %}<small class="note">{{ field.help_text }}</small>{% endif %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger" style="margin-top: 4px; padding: 4px 8px;">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {# Режим из общего списка: полная форма с выбором животного #}
+                {% for field in form %}
+                    <div class="field" style="margin-bottom: 1rem;">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}<small class="note">{{ field.help_text }}</small>{% endif %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger" style="margin-top: 4px; padding: 4px 8px;">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="btns" style="margin-top: 1.5rem; justify-content: flex-end;">
+                <button type="submit" class="btn">Сохранить</button>
+                <a href="{{ cancel_url|default:request.META.HTTP_REFERER|default:'/movements/' }}" class="btn secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> /
+    <a href="{% url 'accounts:profile' %}">Профиль</a> / 
+    <a>Редактирование</a>
+</div>
+<h1 class="title">Редактирование профиля</h1>
+
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div class="card-body" style="padding: 1.5rem;">
+        <form method="post">
+            {% csrf_token %}
+            <div class="field">
+                <label>Полное имя</label>
+                <input type="text" name="full_name" value="{{ user.full_name|default:'' }}" class="form-control">
+            </div>
+            <div class="field" style="margin-top: 1rem;">
+                <label>Адрес электронной почты</label>
+                <input type="email" name="email" value="{{ user.email|default:'' }}" class="form-control">
+            </div>
+            <div class="btns" style="margin-top: 1.5rem; justify-content: flex-end;">
+                <button type="submit" class="btn">Сохранить</button>
+                <a href="{% url 'accounts:profile' %}" class="btn secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

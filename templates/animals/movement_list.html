@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> / 
+    <a>Движение</a>
+</div>
+<h2 class="title">Журнал движений</h2>
+
+<!-- Форма фильтра -->
+<section class="card section">
+    <form method="get" class="filters">
+        <div class="field">
+            <label>Животное</label>
+            <select name="animal">
+                <option value="">Все</option>
+                {% for animal in animals %}
+                <option value="{{ animal.id }}" {% if selected_animal|stringformat:"s" == animal.id|stringformat:"s" %}selected{% endif %}>
+                    {{ animal.unique_id }} — {{ animal.name|default:"Без клички" }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label>Тип события</label>
+            <select name="reason">
+                <option value="">Все</option>
+                <option value="intake" {% if selected_reason == 'intake' %}selected{% endif %}>Поступление</option>
+                <option value="transfer" {% if selected_reason == 'transfer' %}selected{% endif %}>Перемещение внутри приюта</option>
+                <option value="adoption" {% if selected_reason == 'adoption' %}selected{% endif %}>Усыновление</option>
+                <option value="death" {% if selected_reason == 'death' %}selected{% endif %}>Смерть</option>
+                <option value="handover" {% if selected_reason == 'handover' %}selected{% endif %}>Передача другому приюту</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Дата с</label>
+            <input type="date" name="date_from" value="{{ date_from|default:'' }}">
+        </div>
+        <div class="field">
+            <label>Дата по</label>
+            <input type="date" name="date_to" value="{{ date_to|default:'' }}">
+        </div>
+        <div class="btns">
+            <button type="submit" class="btn">Применить</button>
+            <a href="{% url 'animals:movement_list' %}" class="btn secondary">Сбросить</a>
+        </div>
+    </form>
+</section>
+
+<!-- Кнопка добавления движения -->
+<div class="toolbar" style="margin-bottom: 16px;">
+    <strong>История</strong>
+    {% if user.role == 'admin' or user.role == 'vet' %}
+        <a href="{% url 'animals:movement_add' %}" class="btn">Зафиксировать движение</a>
+    {% endif %}
+</div>
+
+<!-- Таблица движений -->
+<section class="card section">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr><th>Дата</th><th>Животное</th><th>Откуда</th><th>Куда</th><th>Причина</th><th>Примечания</th>{% if user.role == 'admin' or user.role == 'vet' %}<th>Документ</th><th>Действия</th>{% endif %}</tr>
+            </thead>
+            <tbody>
+                {% for m in movements %}
+                <tr>
+                    <td>{{ m.date|date:"d.m.Y" }}</td>
+                    <td><a href="{% url 'animals:animal_detail' m.animal.pk %}">{{ m.animal.unique_id }} {% if m.animal.name %}— {{ m.animal.name }}{% endif %}</a></td>
+                    <td>{{ m.from_location|default:"—" }}</td>
+                    <td>{{ m.to_location|default:"—" }}</td>
+                    <td>{{ m.get_reason_display }}</td>
+                    <td>{{ m.notes|default:"—" }}</td>
+                    {% if user.role == 'admin' or user.role == 'vet' %}
+                        <td>
+                            {% if m.reason == 'adoption' or m.reason == 'handover' %}
+                                <a class="btn btn-sm secondary" href="{% url 'animals:movement_contract_pdf' m.pk %}">PDF</a>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'animals:movement_edit' m.id %}" class="btn btn-sm secondary">
+                                <img src="/static/icons/pen.png" alt="Редактировать" style="width: 14px; height: 14px; vertical-align: middle;">
+                            </a>
+                            <a href="{% url 'animals:movement_delete' m.id %}" class="btn btn-danger">
+                                <img src="/static/icons/trash.png" alt="Удалить" style="width: 14px; height: 16px; vertical-align: middle;">
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr><td colspan="6">Нет записей о перемещениях</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

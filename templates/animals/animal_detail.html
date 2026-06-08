@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> /
+    <a href="{% url 'animals:animal_list' %}">Животные</a> /
+    <span>Карточка №{{ animal.unique_id }}</span>
+</div>
+<h1 class="title">Карточка животного</h1>
+
+<div class="card">
+    <div class="card-body">
+        <div class="hero-row">
+            <div class="photo" style="width: 120px; height: 120px; overflow: hidden; border-radius: 14px;">
+                {% if animal.photos.first %}
+                    <img src="{{ animal.photos.first.image.url }}" alt="Фото" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <div style="display: grid; place-items: center; height: 100%; background: #f0f0f0;">📷</div>
+                {% endif %}
+            </div>
+            <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <strong style="font-size: 20px;">Уникальный номер: {{ animal.unique_id }}</strong>
+                        <div style="margin-top: 6px;">
+                            Статус: <span class="status s-{{ animal.status }}">{{ animal.get_status_display }}</span>
+                        </div>
+                    </div>
+                    <div class="btns">
+                        {% if user.is_authenticated %}
+                            {% if user.role == 'admin' or user.role == 'vet' or user.role == 'volunteer' %}
+                                <a href="{% url 'animals:animal_edit' animal.pk %}" class="btn btn-secondary">Редактировать</a>
+                            {% endif %}
+                            {% if user.role == 'admin' %}
+                                <a href="{% url 'animals:animal_delete' animal.pk %}" class="btn btn-danger">Удалить</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Вкладки -->
+<div class="tabs">
+    <a href="?tab=basic{% if filter_query %}&{{ filter_query }}{% endif %}" 
+       class="tab {% if active_tab == 'basic' %}active{% else %}off{% endif %}">Основное</a>
+    <a href="?tab=vet{% if filter_query %}&{{ filter_query }}{% endif %}" 
+       class="tab {% if active_tab == 'vet' %}active{% else %}off{% endif %}">Ветеринария</a>
+    <a href="?tab=movement{% if filter_query %}&{{ filter_query }}{% endif %}" 
+       class="tab {% if active_tab == 'movement' %}active{% else %}off{% endif %}">Движение</a>
+    <a href="?tab=photos{% if filter_query %}&{{ filter_query }}{% endif %}" 
+       class="tab {% if active_tab == 'photos' %}active{% else %}off{% endif %}">Фото</a>
+</div>
+
+<!-- Содержимое вкладок -->
+{% if active_tab == 'basic' %}
+<div id="basic-tab" class="tab-content">
+    <div class="card">
+        <div class="card-body">
+            <strong>Основные данные</strong>
+            <div class="meta">
+                <div><strong>Вид:</strong> {{ animal.get_species_display }}</div>
+                <div><strong>Порода:</strong> {{ animal.breed|default:"не указана" }}</div>
+                <div><strong>Пол:</strong> {{ animal.get_sex_display }}</div>
+                <div><strong>Возраст:</strong> {{ animal.approx_age|default:"не указан" }}</div>
+                <div><strong>Окрас:</strong> {{ animal.color|default:"не указан" }}</div>
+                <div><strong>Дата рождения:</strong> {{ animal.birth_date|default:"не указана" }}</div>
+                <div><strong>Особые приметы:</strong> {{ animal.features|default:"нет" }}</div>
+                <div><strong>Дата поступления:</strong> {{ animal.intake_date|date:"d.m.Y" }}</div>
+                <div><strong>Источник:</strong> {{ animal.intake_source|default:"не указан" }}</div>
+                <div><strong>Кличка:</strong> {{ animal.name|default:"нет клички" }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% elif active_tab == 'vet' %}
+<div id="vet-tab" class="tab-content">
+    <div class="card">
+        <div class="card-body">
+            <div class="toolbar">
+                <strong>Ветеринарная история</strong>
+                {% if user.is_authenticated %}
+                    {% if user.role == 'admin' or user.role == 'vet' %}
+                        <a href="{% url 'animals:vet_record_create' animal.pk %}?next={{ request.get_full_path|urlencode }}" class="btn">+ Добавить запись</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% if vet_records %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr><th>Дата</th><th>Тип</th><th>Описание</th><th>Ветеринар</th><th>След. обработка</th>{% if user.is_authenticated %}<th>Действия</th>{% endif %}</tr>
+                    </thead>
+                    <tbody>
+                        {% for record in vet_records %}
+                        <tr>
+                            <td>{{ record.date|date:"d.m.Y" }}</td>
+                            <td>{{ record.get_type_display }}</td>
+                            <td>{{ record.description|truncatechars:50|default:"—" }}</td>
+                            <td>{{ record.vet_name|default:"—" }}</td>
+                            <td>{% if record.next_due_date %}{{ record.next_due_date|date:"d.m.Y" }}{% else %}—{% endif %}</td>
+                            <td>
+                                {% if user.is_authenticated %}
+                                    {% if user.role == 'admin' or user.role == 'vet' %}
+                                <a href="{% url 'animals:vet_record_edit' record.pk %}?next={{ request.get_full_path|urlencode }}" class="btn btn-sm secondary">
+                                    <img src="/static/icons/pen.png" alt="Удалить" style="width: 14px; height: 14px; vertical-align: middle;">
+                                </a>
+                                <a href="{% url 'animals:vet_record_delete' record.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Удалить запись?');">
+                                    <img src="/static/icons/trash.png" alt="Удалить" style="width: 14px; height: 16px; vertical-align: middle;">
+                                </a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="note">Нет ветеринарных записей.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% elif active_tab == 'movement' %}
+<div id="movement-tab" class="tab-content">
+    <div class="card">
+        <div class="card-body">
+            <div class="toolbar">
+                <strong>История перемещений</strong>
+                {% if user.role == 'admin' or user.role == 'vet' %}
+                    <a href="{% url 'animals:movement_create' animal.pk %}?next={{ request.get_full_path|urlencode }}" class="btn">+ Зафиксировать движение</a>
+                {% endif %}
+            </div>
+            {% if movements %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr><th>Дата</th><th>Откуда</th><th>Куда</th><th>Причина</th><th>Примечания</th>{% if user.role == 'admin' or user.role == 'vet' %}<th>Документ</th>{% endif %}</tr>
+                    </thead>
+                    <tbody>
+                        {% for m in movements %}
+                        <tr>
+                            <td>{{ m.date|date:"d.m.Y" }}</td>
+                            <td>{{ m.from_location|default:"—" }}</td>
+                            <td>{{ m.to_location|default:"—" }}</td>
+                            <td>{{ m.get_reason_display }}</td>
+                            <td>{{ m.notes|default:"—" }}</td>
+                            {% if user.role == 'admin' or user.role == 'vet' %}
+                                <td>
+                                    {% if m.reason == 'adoption' or m.reason == 'handover' %}
+                                        <a class="btn btn-sm secondary" href="{% url 'animals:movement_contract_pdf' m.pk %}">PDF</a>
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="note">Нет записей о перемещениях.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% elif active_tab == 'photos' %}
+<div id="photos-tab" class="tab-content">
+    <div class="card">
+        <div class="card-body">
+            <div class="toolbar">
+                <strong>Галерея</strong>
+                {% if user.is_authenticated %}
+                    {% if photos|length < 5 %}
+                        <a href="{% url 'animals:add_photo' animal.pk %}" class="btn btn-primary">+ Загрузить фото</a>
+                    {% else %}
+                        <span class="note">Достигнут лимит: 5 фото</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="gallery">
+                {% for p in photos %}
+                <div class="thumb" style="position: relative;">
+                    <img src="{{ p.image.url }}" alt="Фото" style="width: 100%; aspect-ratio: 1.15; object-fit: cover; border-radius: 14px;">
+                    {% if request.user.role == 'admin' or request.user == p.uploaded_by %}
+                    <a href="{% url 'animals:delete_photo' p.pk %}" class="btn btn-sm btn-danger" style="position: absolute; top: 8px; right: 8px;">
+                        <img src="/static/icons/trash.png" alt="Удалить" style="width: 14px; height: 16px; vertical-align: middle;">
+                    </a>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="note">Нет загруженных фотографий.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+    const tabs = document.querySelectorAll('.tabs .tab');
+    const contents = {
+        basic: document.getElementById('basic-tab'),
+        vet: document.getElementById('vet-tab'),
+        movement: document.getElementById('movement-tab'),
+        photos: document.getElementById('photos-tab')
+    };
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.getAttribute('data-tab');
+            Object.values(contents).forEach(content => content.style.display = 'none');
+            contents[target].style.display = 'block';
+            tabs.forEach(t => {
+                t.classList.remove('tab', 'off');
+                if (t === tab) t.classList.add('tab');
+                else t.classList.add('off');
+            });
+        });
+    });
+</script>
+{% endblock %}

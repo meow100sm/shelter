@@ -1,0 +1,947 @@
+:root {
+    --green: #2E7D32;
+    --green-2: #3f8f43;
+    --slate: #607D8B;
+    --danger: #D32F2F;
+    --warn: #F9A825;
+    --bg: #F5F7FA;
+    --surface: #ffffff;
+    --line: #D8E0E8;
+    --text: #263238;
+    --muted: #6B7C87;
+    --blue: #1976D2;
+    --radius: 14px;
+    --shadow: 0 10px 32px rgba(38, 50, 56, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Сетка и боковое меню */
+.page {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+}
+
+.sidebar {
+    background: #fff;
+    border-right: 1px solid var(--line);
+    padding: 18px 14px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--green);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 700;
+}
+
+.role {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--text);
+    text-decoration: none;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.nav a.active {
+    background: rgba(46, 125, 50, 0.1);
+    color: var(--green);
+    font-weight: 500;
+}
+
+.nav a.dim {
+    opacity: 0.45;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 100vh;
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.burger {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+}
+
+.search {
+    position: relative;
+    flex: 1;
+    max-width: 520px;
+}
+
+.search input {
+    width: 100%;
+    height: 42px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0 14px 0 40px;
+    background: #fff;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.search:before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 12px;               
+    color: var(--muted);
+    font-size: 16px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.search-drop {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 48px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 8px;
+}
+
+.search-drop div {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.search-drop div:hover {
+    background: #f3f7f9;
+}
+
+.userbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #dce7df;
+    display: grid;
+    place-items: center;
+    color: var(--green);
+    font-weight: 700;
+}
+
+.main {
+    padding: 18px 20px 28px;
+    flex: 1;
+}
+
+.breadcrumbs {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 16px;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.tab {
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: #eaf2ee;
+    color: var(--green);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.tab.off {
+    background: #fff;
+    border: 1px solid var(--line);
+    color: var(--muted);
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.section {
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1.4fr 0.9fr;
+    gap: 16px;
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 16px;
+    align-items: stretch;
+}
+
+.kpi {
+    padding: 18px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.kpi .label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    min-height: 2.6em;
+}
+
+.kpi .value {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    margin-top: auto;
+}
+
+.kpi.green {
+    border-color: rgba(46, 125, 50, 0.25);
+    background: linear-gradient(180deg, #fff, #f6fbf6);
+}
+
+.kpi.warn {
+    border-color: rgba(249, 168, 37, 0.35);
+    background: linear-gradient(180deg, #fff, #fffbf0);
+}
+
+.kpi.danger {
+    border-color: rgba(211, 47, 47, 0.25);
+    background: linear-gradient(180deg, #fff, #fff6f6);
+}
+
+.kpi.blue {
+    border-color: rgba(25, 118, 210, 0.25);
+    background: linear-gradient(180deg, #fff, #f4f9ff);
+}
+
+.toolbar,
+.filters,
+.form-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.filters {
+    /* make filters truly responsive: allow auto-fit and let items shrink */
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    align-items: stretch;
+}
+
+/* Keep action buttons aligned to bottom edge on wide screens without breaking field layout */
+.filters .btns {
+    align-self: end;
+    margin-top: 8px;
+}
+
+.toolbar {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.field label {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+    min-height: 40px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #fff;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.field textarea {
+    min-height: 96px;
+    resize: vertical;
+}
+
+.btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ========== ЕДИНЫЙ СТИЛЬ КНОПОК ========== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    gap: 6px;
+    background: var(--green);
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.2;
+}
+
+.btn:hover {
+    background: #1b5e20;
+    opacity: 1;
+}
+
+/* Второстепенные кнопки – белые с рамкой */
+.btn.secondary,
+.btn.warning,
+.btn.slate,
+.btn.outline {
+    background: white;
+    color: var(--text);
+    border: 1px solid var(--line);
+    min-width: 110px; 
+}
+
+.btn.secondary:hover,
+.btn.warning:hover,
+.btn.slate:hover,
+.btn.outline:hover {
+    background: #f5f5f5;
+    border-color: #b0bec5;
+}
+
+/* Маленькие кнопки (для таблиц, компактных действий) */
+.btn-sm {
+    font-size: 14px;
+    padding: 8px 14px;
+}
+
+/* Кнопка удаления – красная (опасное действие) */
+.btn-danger {
+    background: #D32F2F !important;
+    color: white !important;
+    border: none !important;
+}
+.btn-danger:hover {
+    background: #b71c1c !important;
+}
+
+/* Обычные таблицы */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th,
+td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: #fafcfd;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.s-green {
+    background: #e8f5e9;
+    color: var(--green);
+}
+
+.s-yellow {
+    background: #fff8e1;
+    color: #8c6b00;
+}
+
+.s-red {
+    background: #ffebee;
+    color: var(--danger);
+}
+
+.s-blue {
+    background: #e3f2fd;
+    color: var(--blue);
+}
+
+/* Статусы животных (FR-09 / UI-04): s-{{ animal.status }} */
+.s-healthy {
+    background: #e8f5e9;
+    color: var(--green);
+}
+
+.s-quarantine {
+    background: #fff8e1;
+    color: #8c6b00;
+}
+
+.s-treatment {
+    background: #ffebee;
+    color: var(--danger);
+}
+
+/* Остальные статусы: нейтральная/информационная индикация */
+.s-intake {
+    background: #e3f2fd;
+    color: var(--blue);
+}
+
+.s-ready {
+    background: #e3f2fd;
+    color: var(--blue);
+}
+
+.s-adopted {
+    background: #e8f5e9;
+    color: var(--green);
+}
+
+.s-transferred {
+    background: #e3f2fd;
+    color: var(--blue);
+}
+
+.s-deceased {
+    background: #ffebee;
+    color: var(--danger);
+}
+
+.photo {
+    width: 84px;
+    height: 84px;
+    border-radius: 14px;
+    background: linear-gradient(145deg, #dfe8e2, #f7faf8);
+    border: 1px dashed #b9c7be;
+    display: grid;
+    place-items: center;
+    color: #7d9282;
+    font-size: 12px;
+}
+
+.hero-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 24px;
+    margin-top: 20px;
+    padding-top: 8px;
+}
+
+.meta div {
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #e6edf2;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.thumb {
+    aspect-ratio: 1.15;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: linear-gradient(160deg, #e4ebe8, #fdfefe);
+    position: relative;
+    overflow: hidden;
+}
+
+.thumb:after {
+    content: 'Фото';
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    font-size: 12px;
+    color: #49605a;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 4px 8px;
+    border-radius: 999px;
+}
+
+.modal-wrap {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.modal {
+    background: rgba(38, 50, 56, 0.12);
+    padding: 24px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+}
+
+.dialog {
+    width: min(760px, 100%);
+    background: #fff;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    box-shadow: 0 24px 60px rgba(38, 50, 56, 0.18);
+    overflow: hidden;
+}
+
+.dialog.small {
+    width: min(480px, 100%);
+}
+
+.dialog-head {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dialog-body {
+    padding: 18px;
+}
+
+.dialog-foot {
+    padding: 16px 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.otp {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.otp div {
+    height: 48px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    color: var(--muted);
+    background: #fbfcfd;
+}
+
+.qr {
+    width: 140px;
+    height: 140px;
+    background: repeating-linear-gradient(45deg, #111 0 8px, #fff 8px 16px);
+    border: 8px solid #fff;
+    outline: 1px solid var(--line);
+    border-radius: 12px;
+}
+
+/* Календарь */
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.day-h {
+    text-align: center;
+    font-weight: bold;
+    padding: 8px;
+    background: #f0f0f0;
+    border-radius: 8px;
+}
+
+.day {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px;
+    min-height: 80px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.day:hover {
+    background: #eaf4ea;
+}
+
+.has-event {
+    border-left: 4px solid #2E7D32;
+    background: #f9fff9;
+}
+
+.marker {
+    font-size: 11px;
+    margin-top: 5px;
+    color: #2E7D32;
+    background: #e8f5e9;
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 12px;
+}
+
+/* Равномерное распределение полей фильтра */
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    align-items: stretch;
+}
+
+.filters-grid .field {
+    margin: 0;
+}
+
+.filters-grid .btns {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+/* Сообщения (flash) */
+.alert {
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.alert-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+}
+
+.alert-error,
+.alert-danger {
+    background: #ffebee;
+    color: #d32f2f;
+    border-left: 4px solid #d32f2f;
+}
+
+/* Badge */
+.badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 1100px) {
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-2,
+    .modal-wrap,
+    .filters {
+        grid-template-columns: 1fr;
+    }
+
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .filters {
+        flex-wrap: nowrap;          /* запрещаем перенос */
+        align-items: flex-end;
+    }
+    .filters .field {
+        flex: 1 1 auto;             /* поля растягиваются пропорционально */
+        min-width: 0;               /* разрешаем сжатие */
+    }
+    .filters .btns {
+        margin-top: 0;
+        margin-bottom: 0;
+        flex: 0 0 auto;             /* кнопки не растягиваются */
+        margin-left: 16px;
+        min-width: 120px; 
+    }
+}
+
+@media (max-width: 820px) {
+    .page {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .burger {
+        display: flex;
+    }
+
+    .header {
+        padding: 12px 14px;
+    }
+
+    .main {
+        padding: 14px;
+    }
+
+    .toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-row {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+    .meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px 24px;
+        margin-top: 20px;
+        padding-top: 8px;
+    }
+    .sidebar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100%;
+        background: #fff;
+        z-index: 1000;
+        overflow-y: auto;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    .sidebar.open {
+        display: block;
+    }
+    .burger {
+        display: flex;
+        cursor: pointer;
+    }
+}
+/* Ensure date inputs and other controls never overflow their filter cell */
+input[type="date"], input[type="datetime-local"], .field .form-control {
+    width: 93%;
+    /* width: 100%; */
+    max-width: 100%;
+    min-width: 0;
+    display: block;
+    box-sizing: border-box;
+}
+
+/* Make filter fields shrink correctly inside CSS grid */
+.filters .field, .filters-grid .field {
+    min-width: 0;
+}
+
+/* Grid items like .btns can also force horizontal overflow (min-width:auto). */
+.filters .btns, .filters-grid .btns {
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Extra safety for very narrow screens: avoid grid min-size quirks (notably with date inputs). */
+@media (max-width: 480px) {
+    .filters {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        max-width: 100%;
+    }
+    .filters .field,
+    .filters .btns {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .filters .btns {
+        align-self: stretch;
+    }
+}
+.footer {
+    margin-top: auto;
+    text-align: right;
+}
+
+/* Tables: default = normal width; mobile = horizontal scroll (no squeezing) */
+.table-responsive {
+    display: block;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+}
+
+.table-responsive > table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 0;
+}
+
+/* На мобильных устройствах: делаем таблицу шире контента и включаем скролл */
+@media (max-width: 768px) {
+    .table th,
+    .table td {
+        font-size: 13px;
+        padding: 10px 8px;
+        white-space: nowrap;
+        word-break: normal;
+    }
+
+    .table-responsive > table {
+        width: max-content;
+        min-width: 100%;
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr !important;
+    }
+
+    .card.section {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* iOS can render date inputs a few pixels wider than 100%; clamp to card */
+    .card.section {
+        overflow-x: hidden;
+    }
+}
+/* Make sure filter grids don't overflow on narrow screens */
+@media (max-width: 768px) {
+    .filters,
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Prevent wide media and containers from overflowing their blocks */
+img, svg, video, .card, .dialog, .thumb, .photo {
+    max-width: 100%;
+    height: auto;
+    box-sizing: border-box;
+}
+
+/* Ensure grid and flex children can shrink instead of overflowing */
+.page, .page > *, .content, .sidebar, .grid-2 > *, .grid-4 > * {
+    min-width: 0;
+}

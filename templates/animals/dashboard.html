@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="breadcrumbs">Главная</div>
+<h1 class="title">Дашборд</h1>
+<div class="grid-4">
+    <div class="kpi green"><div class="label">Всего животных</div><div class="value">{{ total_animals }}</div></div>
+    <div class="kpi warn"><div class="label">В карантине</div><div class="value">{{ quarantine_count }}</div></div>
+    <div class="kpi danger"><div class="label">Требуют лечения</div><div class="value">{{ treatment_count }}</div></div>
+    <div class="kpi blue"><div class="label">Готовы к усыновлению</div><div class="value">{{ ready_count }}</div></div>
+</div>
+<div class="grid-2">
+    <section class="card section">
+        <div class="toolbar">
+        <strong>Предстоящие обработки</strong>
+            {% if user.role == 'admin' or user.role == 'vet' %}
+            <a href="{% url 'animals:vet_journal' %}?tab=calendar" class="btn secondary">Календарь</a>
+            {% endif %}
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>Дата</th><th>Животное</th><th>Тип</th>{% if user.is_authenticated %}<th>Действие</th>{% endif %}</tr></thead>
+                <tbody>
+                    {% for record in upcoming_vet_records %}
+                    <tr>
+                        <td>{{ record.date|date:"d.m" }}</td>
+                        <td>{{ record.animal.unique_id }}</td>
+                        <td>{{ record.get_type_display }}</td>
+                        {% if user.is_authenticated %}<td><a href="{% url 'animals:animal_detail' record.animal.pk %}" class="btn secondary" style="height:34px">Перейти</a></td>{% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{% if user.is_authenticated %}4{% else %}3{% endif %}">Нет запланированных обработок</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <section class="card section">
+        <div class="toolbar"><strong>Последние поступления</strong>
+            {% if user.role == 'admin' or user.role == 'vet' %}<a href="{% url 'reports:report_form' %}" class="btn">Ежемесячный отчёт</a>{% endif %}
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>Дата</th><th>Уник. номер</th><th>Вид</th><th>Статус</th></tr></thead>
+                <tbody>
+                    {% for animal in recent_animals %}
+                    <tr>
+                        <td>{{ animal.intake_date|date:"d.m" }}</td>
+                        <td>{{ animal.unique_id }}</td>
+                        <td>{{ animal.get_species_display }}</td>
+                        <td><span class="status s-{{ animal.status }}">{{ animal.get_status_display }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4">Нет поступлений</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}

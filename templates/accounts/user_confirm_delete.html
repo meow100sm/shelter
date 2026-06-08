@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white">
+            <h4>Подтверждение удаления</h4>
+        </div>
+        <div class="card-body">
+            <p>Вы действительно хотите удалить пользователя <strong>{{ user.username }}</strong> ({{ user.get_role_display }})?</p>
+            <p class="text-danger">Это действие необратимо.</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Да, удалить</button>
+                <a href="{% url 'accounts:user_list' %}" class="btn btn-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

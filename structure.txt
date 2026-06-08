@@ -1,0 +1,40 @@
+shelter_project/          # корень проекта
+├── manage.py
+├── shelter/              # основной пакет конфигурации
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── asgi.py
+│   └── wsgi.py
+├── accounts/             # приложение пользователей и 2FA
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── forms.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── backends.py
+│   └── templates/accounts/
+├── animals/              # основное приложение учёта
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── forms.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── filters.py
+│   ├── templatetags/
+│   └── templates/animals/
+├── reports/              # генерация отчётов
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── generators.py
+│   └── templates/reports/
+├── static/               # CSS/JS (Bootstrap, Alpine.js)
+├── media/                # загружаемые фото
+└── requirements.txt

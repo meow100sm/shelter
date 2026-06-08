@@ -1,0 +1,93 @@
+@startuml
+' UML Component Diagram (UML2) — нотация «леденец на палочке»
+' shelter_project2 — упрощённая, визуально читаемая версия
+
+skinparam backgroundColor transparent
+skinparam componentStyle uml2
+skinparam shadowing false
+skinparam linetype ortho
+left to right direction
+
+' --- Компоненты ---
+package "Клиент" {
+  component "Web client\n(браузер)" <<external>> as Client
+}
+
+package "Сервер (Django)" {
+  component "Web UI\n(templates/static)" as UI
+  component "accounts" as ACC
+  component "animals" as ANM
+  component "reports" as RPT
+  component "reminders job\n(send_reminders)" as REM
+}
+
+package "Хранилище данных" {
+  database "PostgreSQL" as DB
+  component "Media storage\n(MEDIA_ROOT)" as FS
+}
+
+package "Внешние сервисы" {
+  component "SMTP" as SMTP
+}
+
+' --- Интерфейсы приложения (показываем ключевые, чтобы не перегружать диаграмму) ---
+interface "IAuth" as IAuth
+interface "IAudit" as IAudit
+interface "IAnimals" as IAnimals
+interface "IVetJournal" as IVetJournal
+interface "IMovement" as IMovement
+interface "IReports" as IReports
+
+' --- Инфраструктурные интерфейсы ---
+interface "IDatabase" as IDatabase
+interface "IFileStorage" as IFileStorage
+interface "IEmail" as IEmail
+
+' --- Предоставляемые интерфейсы (lollipop) ---
+ACC -down- IAuth
+ACC -down- IAudit
+
+ANM -down- IAnimals
+ANM -down- IVetJournal
+ANM -down- IMovement
+
+RPT -down- IReports
+
+DB -down- IDatabase
+FS -down- IFileStorage
+SMTP -down- IEmail
+
+' --- Требуемые интерфейсы (uses) ---
+Client --> UI : HTTP(S)
+
+UI ..> IAuth : <<requires>>\nlogin/2FA
+UI ..> IAnimals : <<requires>>\nCRUD/поиск
+UI ..> IReports : <<requires>>\nзапуск отчётов
+
+ANM ..> IAudit : <<requires>>\nлогирование
+RPT ..> IAudit : <<requires>>\nлогирование
+
+RPT ..> IAnimals : <<requires>>\nданные для отчётов
+RPT ..> IVetJournal : <<requires>>
+RPT ..> IMovement : <<requires>>
+
+ACC ..> IDatabase : <<requires>>
+ANM ..> IDatabase : <<requires>>
+RPT ..> IDatabase : <<requires>>
+
+ANM ..> IFileStorage : <<requires>>\nфото животных
+RPT ..> IFileStorage : <<requires>>\nPDF/XLSX
+
+REM ..> IVetJournal : <<requires>>\nследующие даты
+REM ..> IDatabase : <<requires>>
+REM ..> IEmail : <<requires>>\nemail-напоминания
+
+' Подпорядок (чтобы PlantUML красивее разложил)
+Client -[hidden]-> UI
+UI -[hidden]-> ACC
+ACC -[hidden]-> ANM
+ANM -[hidden]-> RPT
+RPT -[hidden]-> REM
+REM -[hidden]-> DB
+
+@enduml

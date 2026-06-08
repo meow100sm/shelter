@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> /
+    <a>Животные</a>
+</div>
+<h2 class="title">Список животных</h2>
+<section class="card section">
+    <form method="get" class="filters">
+        <div class="field">
+            <label>{{ filter.form.species.label }}</label>
+            {{ filter.form.species }}
+        </div>
+        <div class="field">
+            <label>{{ filter.form.status.label }}</label>
+            {{ filter.form.status }}
+        </div>
+        <div class="field">
+            <label>{{ filter.form.intake_date_after.label }}</label>
+            {{ filter.form.intake_date_after }}
+        </div>
+        <div class="field">
+            <label>{{ filter.form.intake_date_before.label }}</label>
+            {{ filter.form.intake_date_before }}
+        </div>
+        <div class="field">
+            <label>Поиск (номер / кличка)</label>
+            <input type="text" name="search" placeholder="Введите номер или кличку" 
+                value="{{ filter.form.search.value|default:'' }}">
+        </div>
+        <div class="btns">
+            <button type="submit" class="btn">Применить</button>
+            <a href="{% url 'animals:animal_list' %}" class="btn secondary">Сбросить</a>
+        </div>
+    </form>
+</section>
+<section class="card section">
+    <div class="toolbar">
+        <strong>Таблица животных</strong>
+        {% if user.is_authenticated %}
+            {% if user.role == 'admin' or user.role == 'vet' or user.role == 'volunteer' %}
+                <a href="{% url 'animals:animal_create' %}" class="btn">+ Добавить животное</a>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Фото</th>
+                    <th>Уник. №</th>
+                    <th>Кличка</th>
+                    <th>Вид</th>
+                    <th>Статус</th>
+                    <th>Дата поступления</th>
+                    {% if user.is_authenticated %}
+                        {% if user.role == 'admin' or user.role == 'vet' or user.role == 'volunteer' %}
+                            <th>Действия</th>
+                        {% endif %}
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for animal in page_obj %}
+                <tr>
+                    <td>
+                        {% if animal.photos.first %}
+                            <img src="{{ animal.photos.first.image.url }}" alt="Фото" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                        {% else %}
+                            <div class="photo">Нет фото</div>
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'animals:animal_detail' animal.pk %}">{{ animal.unique_id }}</a></td>
+                    <td>{{ animal.name|default:"—" }}</td>
+                    <td>{{ animal.get_species_display }}</td>
+                    <td><span class="status s-{{ animal.status }}">{{ animal.get_status_display }}</span></td>
+                    <td>{{ animal.intake_date|date:"d.m.Y" }}</td>
+                    {% if user.is_authenticated %}
+                        {% if user.role == 'admin' or user.role == 'vet' or user.role == 'volunteer' %}
+                            <td>
+                                <a href="{% url 'animals:animal_edit' animal.pk %}" class="btn btn-sm secondary">
+                                    <img src="/static/icons/pen.png" alt="Редактировать" style="width: 14px; height: 14px; vertical-align: middle;">
+                                </a>
+                                {% if user.role == 'admin' %}
+                                    <a href="{% url 'animals:animal_delete' animal.pk %}" class="btn btn-danger">
+                                        <img src="/static/icons/trash.png" alt="Удалить" style="width: 14px; height: 16px; vertical-align: middle;">
+                                    </a>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if page_obj.has_other_pages %}
+            {% include 'pagination.html' %}
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

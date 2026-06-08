@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> / 
+    <a>Отчёты</a>
+</div>
+<h1 class="title">Формирование отчётов</h1>
+
+<div class="card section" style="max-width: 800px; margin: 0 auto;">
+    <form method="post" id="reportForm">
+        {% csrf_token %}
+        <div class="field">
+            <label>Тип отчёта</label>
+            <select name="report_type" id="reportType" class="form-control" required>
+                <option value="animals">Журнал поступления животных (PDF / Excel)</option>
+                <option value="vet">Ветеринарные мероприятия (PDF / Excel)</option>
+                <option value="movements">Журнал перемещений (PDF / Excel)</option>
+                <option value="yearly">Годовой отчёт (PDF / Excel)</option>
+            </select>
+        </div>
+
+        <div id="dateRangeFields" style="display: block;">
+            <div class="field">
+                <label>Дата с</label>
+                <input type="date" name="start_date" id="startDate" class="form-control">
+            </div>
+            <div class="field">
+                <label>Дата по</label>
+                <input type="date" name="end_date" id="endDate" class="form-control">
+            </div>
+        </div>
+
+        <div id="yearField" style="display: none;">
+            <div class="field">
+                <label>Год</label>
+                <select name="year" id="yearSelect" class="form-control">
+                    {% for y in years %}
+                    <option value="{{ y }}" {% if y == default_year %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Формат</label>
+            <div class="btns" style="gap: 16px;">
+                <label><input type="radio" name="format" value="pdf" checked> PDF</label>
+                <label><input type="radio" name="format" value="excel"> Excel</label>
+            </div>
+        </div>
+
+        <div class="btns" style="margin-top: 20px;">
+            <button type="submit" class="btn">Сформировать</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const reportType = document.getElementById('reportType');
+    const dateRangeDiv = document.getElementById('dateRangeFields');
+    const yearDiv = document.getElementById('yearField');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+
+    function toggleFields() {
+        if (reportType.value === 'yearly') {
+            dateRangeDiv.style.display = 'none';
+            yearDiv.style.display = 'block';
+            startDateInput.required = false;
+            endDateInput.required = false;
+        } else {
+            dateRangeDiv.style.display = 'block';
+            yearDiv.style.display = 'none';
+            startDateInput.required = true;
+            endDateInput.required = true;
+        }
+    }
+    reportType.addEventListener('change', toggleFields);
+    toggleFields();
+</script>
+{% endblock %}

@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> /
+    <a>Ветеринария</a>
+</div>
+<h1 class="title">Ветеринарный журнал</h1>
+
+<!-- Форма фильтра -->
+<div class="card section">
+    <form method="get" class="filters">
+        <div class="field">
+            <label>Вид животного</label>
+            <select name="species">
+                <option value="">Все</option>
+                {% for code, name in species_choices %}
+                <option value="{{ code }}" {% if selected_species == code %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label>Тип процедуры</label>
+            <select name="type">
+                <option value="">Все</option>
+                {% for code, name in type_choices %}
+                <option value="{{ code }}" {% if selected_type == code %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label>Дата с</label>
+            <input type="date" name="date_from" value="{{ date_from|default:'' }}">
+        </div>
+        <div class="field">
+            <label>Дата по</label>
+            <input type="date" name="date_to" value="{{ date_to|default:'' }}">
+        </div>
+        <div class="btns">
+            <button type="submit" class="btn">Применить</button>
+            <a href="{% url 'animals:vet_journal' %}" class="btn secondary">Сбросить</a>
+        </div>
+    </form>
+</div>
+
+<!-- Вкладки как ссылки (сохраняют активную вкладку) -->
+<div class="tabs">
+    <a href="?tab=table{% if filter_query %}&{{ filter_query }}{% endif %}" 
+       class="tab {% if active_tab == 'table' %}active{% else %}off{% endif %}">Журнал</a>
+    <a href="?tab=calendar{% if filter_query %}&{{ filter_query }}{% endif %}" 
+       class="tab {% if active_tab == 'calendar' %}active{% else %}off{% endif %}">Календарь</a>
+</div>
+
+<!-- Кнопка добавления записи – видна на любой вкладке -->
+<div class="toolbar" style="margin-bottom: 16px;">
+    <strong>Ветеринарные записи</strong>
+    <a href="{% url 'animals:vet_record_add' %}" class="btn">+ Добавить запись</a>
+</div>
+
+
+<!-- =================== ВКЛАДКА ЖУРНАЛ =================== -->
+{% if active_tab == 'table' %}
+<div class="card section">
+    <div class="toolbar">
+        <strong>Записи</strong>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr><th>Дата</th><th>Животное</th><th>Тип</th><th>Описание</th><th>Ветеринар</th><th>След. обработка</th><th>Действия</th></tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.date|date:"d.m.Y" }}</td>
+                    <td><a href="{% url 'animals:animal_detail' record.animal.pk %}">{{ record.animal.unique_id }} {% if record.animal.name %}— {{ record.animal.name }}{% endif %}</a></td>
+                    <td>{{ record.get_type_display }}</td>
+                    <td>{{ record.description|truncatechars:50 }}</td>
+                    <td>{{ record.vet_name|default:"—" }}</td>
+                    <td>{% if record.next_due_date %}{{ record.next_due_date|date:"d.m.Y" }}{% else %}—{% endif %}</td>
+                    <td>
+                        <a href="{% url 'animals:vet_record_edit' record.pk %}" class="btn btn-sm secondary">
+                            <img src="/static/icons/pen.png" alt="Удалить" style="width: 14px; height: 14px; vertical-align: middle;">
+                        </a>
+                        <a href="{% url 'animals:vet_record_delete' record.pk %}" class="btn btn-danger" onclick="return confirm('Удалить?');">
+                            <img src="/static/icons/trash.png" alt="Удалить" style="width: 14px; height: 16px; vertical-align: middle;">
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7">Нет записей</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- =================== ВКЛАДКА КАЛЕНДАРЬ =================== -->
+{% if active_tab == 'calendar' %}
+<div class="card section">
+    <div class="toolbar">
+        <strong>{{ current_month }}.{{ current_year }}</strong>
+        <div>
+            <a href="?year={{ prev_year }}&month={{ prev_month }}&tab=calendar{% if filter_query %}&{{ filter_query }}{% endif %}" class="btn secondary">◀ Пред.</a>
+            <a href="?year={{ next_year }}&month={{ next_month }}&tab=calendar{% if filter_query %}&{{ filter_query }}{% endif %}" class="btn secondary">След. ▶</a>
+            <a href="?tab=calendar{% if filter_query %}&{{ filter_query }}{% endif %}" class="btn secondary">Сегодня</a>
+        </div>
+    </div>
+    <div class="calendar" id="calendar-grid">
+        <div class="day-h">Пн</div><div class="day-h">Вт</div><div class="day-h">Ср</div>
+        <div class="day-h">Чт</div><div class="day-h">Пт</div><div class="day-h">Сб</div><div class="day-h">Вс</div>
+        {% for week in calendar_days %}
+            {% for day in week %}
+                <div class="day {% if day.has_records %}has-event{% endif %}" data-date="{{ day.date }}">
+                    <div class="day-number">{{ day.day|default:'' }}</div>
+                    {% if day.has_records %}
+                        <div class="marker">{{ day.record_count }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Модальное окно для добавления записи
+<div id="record-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div class="dialog" style="width:500px; background:white; border-radius:14px;">
+        <div class="dialog-head">
+            <strong>Добавить ветеринарную запись</strong>
+            <span style="cursor:pointer;" onclick="closeModal()">✖</span>
+        </div>
+        <div class="dialog-body">
+            <form method="post" action="{% url 'animals:vet_record_add' %}" id="record-form">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <div class="field">
+                    <label>Животное *</label>
+                    <select name="animal" required>
+                        {% for animal in animals %}
+                        <option value="{{ animal.id }}">{{ animal.unique_id }} — {{ animal.name|default:"Без клички" }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Дата *</label>
+                    <input type="date" name="date" id="modal-date" required>
+                </div>
+                <div class="field">
+                    <label>Тип *</label>
+                    <select name="type" required>
+                        {% for code, name in type_choices %}
+                        <option value="{{ code }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Описание</label>
+                    <textarea name="description" rows="3"></textarea>
+                </div>
+                <div class="field">
+                    <label>Ветеринар</label>
+                    <input type="text" name="vet_name" value="{{ user.full_name|default:user.username }}">
+                </div>
+                <div class="field">
+                    <label>Следующая обработка</label>
+                    <input type="date" name="next_due_date">
+                </div>
+                <div class="dialog-foot">
+                    <button type="submit" class="btn">Сохранить</button>
+                    <button type="button" class="btn secondary" onclick="closeModal()">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> -->
+
+<script>
+    const modal = document.getElementById('record-modal');
+    const modalDateInput = document.getElementById('modal-date');
+
+    function openModal(date = null) {
+        if (date) {
+            modalDateInput.value = date;
+        } else {
+            modalDateInput.value = new Date().toISOString().slice(0,10);
+        }
+        modal.style.display = 'flex';
+    }
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    // Кнопка "+ Добавить запись"
+    document.getElementById('open-record-modal')?.addEventListener('click', () => openModal());
+
+    // Клик по дню календаря – используем делегирование, чтобы обработчик работал для всех ячеек
+    const calendarGrid = document.getElementById('calendar-grid');
+    if (calendarGrid) {
+        calendarGrid.addEventListener('click', function(e) {
+            const dayCell = e.target.closest('.day');
+            if (dayCell) {
+                const date = dayCell.getAttribute('data-date');
+                if (date) {
+                    const nextUrl = encodeURIComponent(window.location.pathname + window.location.search);
+                    window.location.href = "{% url 'animals:vet_record_add' %}?date=" + date + "&next=" + nextUrl;
+                }
+            }
+        });
+    }
+</script>
+
+<style>
+    .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+        margin-top: 16px;
+    }
+    .day-h {
+        text-align: center;
+        font-weight: bold;
+        padding: 8px;
+        background: #f0f0f0;
+        border-radius: 8px;
+    }
+    .day {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 8px;
+        min-height: 80px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .day:hover {
+        background: #eaf4ea;
+    }
+    .has-event {
+        border-left: 4px solid #2E7D32;
+        background: #f9fff9;
+    }
+    .marker {
+        font-size: 11px;
+        margin-top: 5px;
+        color: #2E7D32;
+        background: #e8f5e9;
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 12px;
+    }
+    .tabs a {
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 8px;
+    }
+</style>
+{% endblock %}

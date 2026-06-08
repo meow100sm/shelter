@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> /
+    <a>Пользователи</a>
+</div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Пользователи системы</h2>
+        <a href="{% url 'accounts:user_create' %}" class="btn btn-success">+ Добавить пользователя</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-success">
+                <tr><th>Логин</th><th>ФИО</th><th>Роль</th><th>2FA</th><th>Последний вход</th><th>Действия</th></tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.full_name|default:"—" }}</td>
+                    <td>{{ u.get_role_display }}</td>
+                    <td>{% if u.is_2fa_enabled %}<span class="badge bg-success">Вкл</span>{% else %}<span class="badge bg-secondary">Выкл</span>{% endif %}</td>
+                    <td>{{ u.last_login|date:"d.m.Y H:i"|default:"никогда" }}</td>
+                    <td>
+                        <a href="{% url 'accounts:user_edit' u.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
+                        <a href="{% url 'accounts:user_delete' u.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center">Нет пользователей</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

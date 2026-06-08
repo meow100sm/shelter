@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="breadcrumbs">
+    <a href="{% url 'animals:dashboard' %}">Главная</a> / 
+    <a>Аудит</a>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 16px;">
+    <h1 class="title" style="margin: 0;">Журнал аудита</h1>
+    <form method="get" style="margin: 0;">
+        <input type="hidden" name="export" value="csv">
+        {% for key, value in request.GET.items %}
+            {% if key != 'export' %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn secondary">📄 Экспорт CSV</button>
+    </form>
+</div>
+
+<!-- Форма фильтра (уже без кнопки экспорта) -->
+<section class="card section">
+    <form method="get" class="filters">
+        <div class="field">
+            <label>Пользователь</label>
+            <select name="user">
+                <option value="">Все</option>
+                {% for u in users %}
+                <option value="{{ u.id }}" {% if selected_user|stringformat:"s" == u.id|stringformat:"s" %}selected{% endif %}>
+                    {{ u.username }} ({{ u.get_role_display }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label>Дата с</label>
+            <input type="date" name="date_from" value="{{ date_from|default:'' }}">
+        </div>
+        <div class="field">
+            <label>Дата по</label>
+            <input type="date" name="date_to" value="{{ date_to|default:'' }}">
+        </div>
+        <div class="btns">
+            <button type="submit" class="btn">Применить</button>
+            <a href="{% url 'accounts:audit_log' %}" class="btn secondary">Сбросить</a>
+        </div>
+    </form>
+</section>
+
+
+<!-- Таблица аудита -->
+<div class="card section">
+    <div class="toolbar">
+        <strong>Все действия</strong>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Дата/время</th>
+                    <th>Пользователь</th>
+                    <th>Действие</th>
+                    <th>Детали</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.timestamp|date:"d.m.Y H:i:s" }}</td>
+                    <td>{{ log.user.username|default:"Система" }} ({{ log.user.get_role_display|default:"—" }})</td>
+                    <td>{{ log.action }}</td>
+                    <td>{{ log.details|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" style="text-align: center;">Нет записей аудита</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Пагинация (если будет использоваться) -->
+{% if logs.has_other_pages %}
+<div class="pagination">
+    <ul class="pagination" style="display: flex; gap: 8px; list-style: none; flex-wrap: wrap;">
+        {% if logs.has_previous %}
+        <li><a href="?page=1{% if filter_query %}&{{ filter_query }}{% endif %}" class="btn secondary">« Первая</a></li>
+        <li><a href="?page={{ logs.previous_page_number }}{% if filter_query %}&{{ filter_query }}{% endif %}" class="btn secondary">Предыдущая</a></li>
+        {% endif %}
+        <li><span class="btn">Страница {{ logs.number }} из {{ logs.paginator.num_pages }}</span></li>
+        {% if logs.has_next %}
+        <li><a href="?page={{ logs.next_page_number }}{% if filter_query %}&{{ filter_query }}{% endif %}" class="btn secondary">Следующая</a></li>
+        <li><a href="?page={{ logs.paginator.num_pages }}{% if filter_query %}&{{ filter_query }}{% endif %}" class="btn secondary">Последняя »</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

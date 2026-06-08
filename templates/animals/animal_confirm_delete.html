@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 40px auto;">
+    <div class="dialog small">
+        <div class="dialog-head"><strong>Подтверждение удаления</strong></div>
+        <div class="dialog-body">
+            <p>Вы уверены, что хотите удалить животное <strong>{{ animal.unique_id }} ({{ animal.get_species_display }})</strong>?</p>
+            <p class="note">Это действие нельзя отменить.</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="dialog-foot" style="justify-content: space-between;">
+                    <button type="submit" class="btn btn-danger">Да, удалить</button>
+                    <a href="{% url 'animals:animal_detail' animal.pk %}" class="btn secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+@startuml
+' Docker deployment diagram for shelter_project2 (matches docker-compose.yml)
+
+skinparam backgroundColor transparent
+skinparam componentStyle uml2
+skinparam shadowing false
+left to right direction
+
+' Client side
+node "Client (Browser)" as client {
+  artifact "Browser" as browser
+}
+
+' Docker host with containers and volumes
+node "Docker Host" as host {
+  folder "Volumes" as volumes {
+    folder "postgres_data (volume)" as pgdata
+  }
+
+  container "caddy\n(container: caddy)" as caddy
+  container "web\n(container: web)" as web
+  container "db\n(container: db)" as db
+  container "reminders\n(container: reminders)" as reminders
+
+  folder "Bind mounts" as binds {
+    folder "./media -> /app/media" as media
+    folder "./staticfiles -> /app/staticfiles" as staticfiles
+  }
+}
+
+cloud "External services" as ext {
+  component "SMTP server (external)" as smtp
+}
+
+' Network relations (explicit protocols/ports)
+browser --> caddy : HTTPS 443 / HTTP 80
+
+' Caddy proxies to Django web inside docker network
+caddy --> web : HTTP 8000 (reverse_proxy)
+
+' Django web connects to Postgres over TCP
+web --> db : PostgreSQL TCP 5432 (psycopg2)
+
+' Reminders worker uses same DB connection
+reminders --> db : PostgreSQL TCP 5432
+
+' Host port mappings (compose)
+note left of db
+  Port mapping on host: 5433 -> container 5432
+  (see docker-compose.yml)
+end note
+
+note left of web
+  Port mapping on host: 8000 -> container 8000
+  (serve dev server; Caddy reverse-proxies to container)
+end note
+
+' File system mounts (not network)
+web ..> media : bind mount (read/write)
+web ..> staticfiles : bind mount (read)
+
+' Volume ownership
+db ..> pgdata : uses volume (postgres_data)
+
+' External SMTP used for sending emails
+web --> smtp : SMTP TLS/SSL (465/587)
+reminders --> smtp : SMTP TLS/SSL (465/587)
+
+note right of caddy
+  Caddy terminates TLS and forwards requests
+  to `web` via reverse proxy inside the docker network.
+end note
+
+@enduml

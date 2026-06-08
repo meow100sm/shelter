@@ -1,0 +1,24 @@
+{% extends 'base_no_menu.html' %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 40px auto;">
+    <div class="card">
+        <div class="card-header bg-primary text-white" style="padding: 12px 20px;">
+            <h3 class="mb-0">Двухфакторная аутентификация</h3>
+        </div>
+        <div class="card-body" style="padding: 1rem 1.5rem 1.5rem;">
+            <p>Для входа введите 6-значный код из вашего приложения-аутентификатора.</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="field mb-4">
+                    <label for="code">Код подтверждения *</label>
+                    <input type="text" name="code" id="code" class="form-control" placeholder="000000" required>
+                </div>
+                <div class="btns" style="justify-content: flex-end; gap: 12px;">
+                    <button type="submit" class="btn">Подтвердить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
