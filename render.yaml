@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: shelter
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn shelter.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shelter-db
+          property: connectionString
