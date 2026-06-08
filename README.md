@@ -259,6 +259,29 @@ $env:HTTPS_PORT='8445'
 .\scripts\run_https.ps1
 ```
 
+---
+
+## Развёртывание на Render
+
+Для Render в проект уже добавлены:
+
+- `render.yaml` со стартовой командой `gunicorn shelter.wsgi:application`
+- `runtime.txt` с Python `3.12.7`
+
+Что нужно указать в Render:
+
+1. Создайте Web Service из этого репозитория.
+2. Если Render не подхватил blueprint автоматически, используйте:
+  - Build Command: `pip install -r requirements.txt`
+  - Start Command: `gunicorn shelter.wsgi:application`
+3. Добавьте переменные окружения:
+  - `SECRET_KEY`
+  - `DEBUG=False`
+  - `ALLOWED_HOSTS=your-service.onrender.com`
+4. Подключите PostgreSQL в Render или задайте `DATABASE_URL`.
+
+Если после этого сайт запустится, но не откроется база, значит Render не видит PostgreSQL-подключение. В таком случае проверьте, что у сервиса есть `DATABASE_URL` или корректно заданы `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT`.
+
 #### Troubleshooting (LAN)
 
 - Если на ПК открывается `https://localhost:8444/`, а с телефона нет — это почти всегда Firewall или вы открываете не тот IP (VPN/VirtualBox).
