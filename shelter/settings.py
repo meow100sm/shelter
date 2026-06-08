@@ -9,7 +9,8 @@ SECRET_KEY = 'django-insecure-&u5$wq+6n!w=*d@p7lbv%$e3t=8!x9z2q0r1s2t3u4v5w6x7y8
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['shelter-q6qb.onrender.com', 'localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://shelter-q6qb.onrender.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -65,11 +66,11 @@ WSGI_APPLICATION = 'shelter.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('POSTGRES_DB', 'shelter_db'),
-        'USER': os.environ.get('POSTGRES_USER', 'shelter_user'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', '2112'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5433'),
+        'NAME': os.environ.get('POSTGRES_DB', 'shelter_db_3jjd'),
+        'USER': os.environ.get('POSTGRES_USER', 'shelter_db_3jjd_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'riKTsX3uvPcqfYHYWXGMW0IHBx6EoscM'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'dpg-d8jd7k6k1jcs73f7f24g-a'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 
