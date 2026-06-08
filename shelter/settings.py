@@ -1,17 +1,15 @@
 from pathlib import Path
 import os
 import sys
-from urllib.parse import urlparse
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Секретный ключ лучше задавать через переменную окружения на Render.
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-&u5$wq+6n!w=*d@p7lbv%$e3t=8!x9z2q0r1s2t3u4v5w6x7y8z9')
+# Секретный ключ – в реальном проекте храните в переменных окружения
+SECRET_KEY = 'django-insecure-&u5$wq+6n!w=*d@p7lbv%$e3t=8!x9z2q0r1s2t3u4v5w6x7y8z9'
 
-DEBUG = os.environ.get('DEBUG', 'True').strip().lower() in {'1', 'true', 'yes', 'on'}
+DEBUG = True
 
-allowed_hosts = os.environ.get('ALLOWED_HOSTS', '*')
-ALLOWED_HOSTS = [host.strip() for host in allowed_hosts.split(',') if host.strip()]
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -62,33 +60,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'shelter.wsgi.application'
 
-# База данных PostgreSQL.
-# На Render удобнее всего подхватывать DATABASE_URL от связанной PostgreSQL-базы.
-database_url = os.environ.get('DATABASE_URL', '').strip()
-if database_url:
-    parsed = urlparse(database_url)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': parsed.path.lstrip('/'),
-            'USER': parsed.username or '',
-            'PASSWORD': parsed.password or '',
-            'HOST': parsed.hostname or '',
-            'PORT': str(parsed.port or ''),
-        }
+# База данных PostgreSQL
+# Можно переопределять параметры через переменные окружения (удобно для Docker/демо).
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('POSTGRES_DB', 'shelter_db'),
+        'USER': os.environ.get('POSTGRES_USER', 'shelter_user'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', '2112'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5433'),
     }
-else:
-    # Можно переопределять параметры через переменные окружения (удобно для Docker/локального запуска).
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ.get('POSTGRES_DB', 'shelter_db'),
-            'USER': os.environ.get('POSTGRES_USER', 'shelter_user'),
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', '2112'),
-            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-            'PORT': os.environ.get('POSTGRES_PORT', '5433'),
-        }
-    }
+}
 
 # Во время запуска автотестов по умолчанию используем SQLite (в памяти),
 # чтобы тесты работали на любой машине без установленного PostgreSQL.
