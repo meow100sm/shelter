@@ -12,3 +12,4 @@ Pillow #==10.3.0
 pdfminer.six #==20231228
 pypdf #==4.2.0
 PyMuPDF #==1.24.9
+gunicorn #==20.1.0
