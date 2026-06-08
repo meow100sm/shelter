@@ -1,14 +1,14 @@
-Django==4.2.15
-psycopg2-binary==2.9.9
-django-otp==1.5.0
-qrcode==7.4.2
+Django #==4.2.15
+psycopg2-binary #==2.9.9
+django-otp #==1.5.0
+qrcode #==7.4.2
 # bcrypt==4.1.2
-reportlab==4.1.0
-openpyxl==3.1.2
-django-filter==24.2
-django-crispy-forms==2.1
-crispy-bootstrap5==0.7
-Pillow==10.3.0
-pdfminer.six==20231228
-pypdf==4.2.0
-PyMuPDF==1.24.9
+reportlab #==4.1.0
+openpyxl #==3.1.2
+django-filter #==24.2
+django-crispy-forms #==2.1
+crispy-bootstrap5 #==0.7
+Pillow #==10.3.0
+pdfminer.six #==20231228
+pypdf #==4.2.0
+PyMuPDF #==1.24.9

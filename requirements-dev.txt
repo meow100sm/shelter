@@ -1,8 +1,8 @@
 # Dev-only tooling (optional)
-ruff==0.6.9
-vulture==2.11
+ruff #==0.6.9
+vulture #==2.11
 
 # Testing (optional)
-pytest==8.3.3
-pytest-django==4.9.0
+pytest #==8.3.3
+pytest-django #==4.9.0
 playwright==1.48.0
